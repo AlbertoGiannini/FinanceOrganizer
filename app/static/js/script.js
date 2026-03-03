@@ -1,6 +1,8 @@
+const API_URL = "http://127.0.0.1:8000";
+
 async function loadData() {
     try {
-        const response = await fetch("http://127.0.0.1:8000/get_all");
+        const response = await fetch(`${API_URL}/get_all`);
         const data = await response.json();
         const tableBody = document.getElementById("table-body");
         tableBody.innerHTML = "";
@@ -13,6 +15,11 @@ async function loadData() {
                 <td style="color: ${valueColor};">R$ ${item.value}</td>
                 <td>${item.type}</td>
                 <td>${date_item}</td>
+                <td>
+                    <button onclick="deleteItem(${item.id})" class="delete-button">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
             `;
             tableBody.appendChild(line);
         });
@@ -25,7 +32,7 @@ loadData();
 
 async function loadAmount() {
     try {
-        const response = await fetch("http://127.0.0.1:8000/total-amount")
+        const response = await fetch(`${API_URL}/total-amount`)
         const data = await response.json();
         const amountElement = document.getElementById("current-balance")
         amountElement.textContent = `Saldo Atual: R$ ${data["total-amount"].toFixed(2)}`;
@@ -51,7 +58,7 @@ form.addEventListener("submit", async (event) => {
         date_item: date
     };
     try {
-        const response = await fetch("http://127.0.0.1:8000/send-item", {
+        const response = await fetch(`${API_URL}/send-item`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -71,3 +78,24 @@ form.addEventListener("submit", async (event) => {
             alert("Erro ao enviar o item. Por favor, tente novamente.");
         }
 });
+
+async function deleteItem(id) {
+    if (!confirm("Tem certeza que deseja excluir este item?")) {
+        return;
+    }
+    try {
+        const response = await fetch(`${API_URL}/delete-item/${id}`, {
+            method: "DELETE"
+        });
+        if (response.status === 204) {
+            loadAmount();
+            loadData();
+        } else {
+            alert("Erro ao deletar o item. Por favor, tente novamente.");
+        
+        }
+    } catch (error) {
+        console.error("Erro ao deletar o item:", error);
+        alert("Erro ao deletar o item. Por favor, tente novamente.");
+    }
+}

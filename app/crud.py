@@ -20,7 +20,7 @@ def get_all_items():
     )
     return response.data
 
-def get_all_expense_revenues(type: str):
+def get_all_expense_incomes(type: str):
     response = (
         db.table("finance")
         .select("*")
@@ -29,7 +29,7 @@ def get_all_expense_revenues(type: str):
     )
     return response.data
 
-def get_expenses_revenue_by_category(type: str, category: str, ):
+def get_expenses_income_by_category(type: str, category: str, ):
     query = db.table("finance").select("*").eq("type", type)
     if category:
         query.eq("category", category)

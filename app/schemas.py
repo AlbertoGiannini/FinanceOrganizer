@@ -3,7 +3,6 @@ from typing import Literal
 from datetime import date
 
 class Item(BaseModel):
-    name: str = Field(min_length=1, max_length=50)
     value: float = Field(gt=0)
     type: str = Literal["receita", "despesa"]
     category: str = Field(min_length=1, max_length=50)
