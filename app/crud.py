@@ -20,30 +20,27 @@ def get_all_items():
     )
     return response.data
 
-def get_all_revenues():
+def get_all_expense_revenues(type: str):
     response = (
         db.table("finance")
         .select("*")
-        .eq("type", "receita")
+        .eq("type", type)
         .execute()
     )
     return response.data
 
-def get_all_expenses():
-    response = (
-        db.table("finance")
-        .select("*")
-        .eq("type", "despesa")
-        .execute()
-    )
+def get_expenses_revenue_by_category(type: str, category: str, ):
+    query = db.table("finance").select("*").eq("type", type)
+    if category:
+        query.eq("category", category)
+    response = query.execute()
     return response.data
 
-def get_expenses_by_category(category: str):
+def delete_item(item_id: int):
     response = (
         db.table("finance")
-        .select("*")
-        .eq("type", "despesa")
-        .eq("category", category)
+        .delete()
+        .eq("id", item_id)
         .execute()
     )
-    return response.data
+    return f"Item with id {item_id} deleted successfully. {response.data}" 
