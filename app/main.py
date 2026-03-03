@@ -1,10 +1,22 @@
 from typing import Literal
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from schemas import Item
 from crud import *
 
+
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Em desenvolvimento, permite que o HTML fale com a API
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/get_all")
 async def teste():

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador Financeiro</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Meu Organizador Financeiro</h1>
+        <nav>
+            <a href="#">Dashboard</a>
+            <a href="#">Relatórios</a>
+            <a href="#">Configurações</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="summary">
+            <h2>Resumo</h2>
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Saldo Atual</h3>
+                    <p id="current-balance"></p>
+                </div>
+                <div class="card income">
+                    <h3>Receitas do Mês</h3>
+                    <p class="income-text" id="income"></p>
+                </div>
+                <div class="card expense">
+                    <h3>Despesas do Mês</h3>
+                    <p class="expense-text" id="expense-month"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="new-transaction">
+            <h2>Adicionar Nova Transação</h2>
+            <form id="transaction-form" action="#" method="post">
+                <div class="form-group">
+                    <label for="category">Categoria</label>
+                    <input type="text" id="category" name="category" placeholder="Ex: Salário, Aluguel" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Valor</label>
+                    <input type="number" id="amount" name="amount" placeholder="0,00" step="0.010" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Tipo</label>
+                    <select id="type" name="type" required>
+                        <option value="receita">Receita</option>
+                        <option value="despesa">Despesa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Data</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <button type="submit">Adicionar</button>
+            </form>
+        </section>
+
+        <section class="transactions">
+            <h2>Últimas Transações</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                        <th>Tipo</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr>
+                        <td>Salário</td>
+                        <td class="income-text">R$ 8.500,00</td>
+                        <td>Receita</td>
+                        <td>01/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td>Aluguel</td>
+                        <td class="expense-text">- R$ 1.500,00</td>
+                        <td>Despesa</td>
+                        <td>05/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td>Supermercado</td>
+                        <td class="expense-text">- R$ 750,00</td>
+                        <td>Despesa</td>
+                        <td>07/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td>Conta de Luz</td>
+                        <td class="expense-text">- R$ 250,00</td>
+                        <td>Despesa</td>
+                        <td>10/03/2026</td>
+                    </tr>
+                    <tr>
+                        <td>Internet</td>
+                        <td class="expense-text">- R$ 250,00</td>
+                        <td>Despesa</td>
+                        <td>10/03/2026</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Meu Organizador Financeiro. Todos os direitos reservados.</p>
+    </footer>
+<script src="js/script.js"></script>
+</body>
+</html>
