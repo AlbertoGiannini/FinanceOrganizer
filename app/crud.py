@@ -43,4 +43,16 @@ def delete_item(item_id: int):
         .eq("id", item_id)
         .execute()
     )
-    return f"Item with id {item_id} deleted successfully. {response.data}" 
+    return f"Item with id {item_id} deleted successfully. {response.data}"
+
+def update_item(item_id: int, item: Item):
+    item_json = item.model_dump(mode="json")
+    if item_json["type"] not in ["receita", "despesa"]:
+            return "Invalid type. Must be 'receita' or 'despesa'."
+    response = (
+        db.table("finance")
+        .update(item_json)
+        .eq("id", item_id)
+        .execute()
+    )
+    return response.data

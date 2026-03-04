@@ -53,3 +53,8 @@ async def income_expenses_by_category(type: str, category: str = None):
 async def remove_item(item_id: int):
     response = delete_item(item_id)
     return response
+
+@app.put("/update-item/{item_id}", status_code=status.HTTP_200_OK)
+async def change_item(item_id: int, item: Item):
+    response = update_item(item_id, item)
+    return response
