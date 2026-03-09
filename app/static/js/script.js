@@ -75,6 +75,7 @@ form.addEventListener("submit", async (event) => {
             form.reset();
             loadData();
             loadAmount();
+            loadMonthlyExpensesIncomes();
         } else {
             alert("Erro ao adicionar o item. Por favor, tente novamente.");
         }
@@ -94,6 +95,10 @@ async function tableButtons() {
             deleteButton.addEventListener("click", async function(event) {
             if (id) {
                 await deleteItem(id);
+                loadData();
+                loadAmount();
+                loadMonthlyExpensesIncomes();
+                
             }
         });
         }
@@ -186,3 +191,31 @@ async function updateItem(id) {
         alert("Erro ao editar o item. Por favor, tente novamente.");
     }
 }
+
+async function loadMonthlyExpensesIncomes() {
+    expenseElement = document.getElementById("expense-month");
+    incomeElement = document.getElementById("income");
+    try {
+        const [resRec, resDes] = await Promise.all([
+            fetch(`${API_URL}/get-month-expenses?type=receita`),
+            fetch(`${API_URL}/get-month-expenses?type=despesa`)
+        ]);
+        const receitas = await resRec.json();
+        const despesas = await resDes.json();
+        var totalIncomes = 0;
+        receitas.forEach(item => {
+            totalIncomes = totalIncomes + item['value'];
+        });
+        incomeElement.textContent = `R$ ${totalIncomes}`;
+
+        var totalExpenses = 0;
+        despesas.forEach(item => {
+            totalExpenses = totalExpenses + item['value'];
+        });
+        expenseElement.textContent = `R$ ${totalExpenses}`;
+    } catch (error) {
+        console.error("Erro ao carregar os dados:", error);
+    }
+}
+
+loadMonthlyExpensesIncomes();

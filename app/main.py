@@ -2,6 +2,7 @@ from typing import Literal
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from datetime import datetime
 from schemas import Item
 from crud import *
 
@@ -57,4 +58,13 @@ async def remove_item(item_id: int):
 @app.put("/update-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def change_item(item_id: int, item: Item):
     response = update_item(item_id, item)
+    return response
+
+@app.get("/get-month-expenses", status_code=status.HTTP_200_OK)
+async def get_month_expenses(
+        type: Literal["receita", "despesa"],
+        month: int = datetime.now().month,
+        year: int = datetime.now().year,
+    ):
+    response = get_by_month(type, month, year)
     return response

@@ -1,5 +1,6 @@
 from database import supabase_connection as db
 from schemas import Item
+import calendar
 
 def insert_item(item: Item):
     try:
@@ -53,6 +54,20 @@ def update_item(item_id: int, item: Item):
         db.table("finance")
         .update(item_json)
         .eq("id", item_id)
+        .execute()
+    )
+    return response.data
+
+def get_by_month(type: str, month: int, year: int):
+    last_day = calendar.monthrange(year, month)[1]
+    start_date = f"{year}-{month:02d}-01"
+    end_date = f"{year}-{month:02d}-{last_day}"
+    response = (
+         db.table("finance")
+        .select("*")
+        .eq("type", type)
+        .gte("date_item", start_date)
+        .lte("date_item", end_date)
         .execute()
     )
     return response.data
