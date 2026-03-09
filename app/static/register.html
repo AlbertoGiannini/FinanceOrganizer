@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Organizador Financeiro</title>
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>Crie sua Conta</h1>
+            <p>Preencha os campos abaixo para se registrar.</p>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Registrar</button>
+            </form>
+            <div class="switch-auth">
+                <p>Já tem uma conta? <a href="/login">Faça login</a></p>
+            </div>
+        </div>
+    </div>
+    <script src="js/register.js"></script>
+</body>
+</html>
