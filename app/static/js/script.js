@@ -115,24 +115,24 @@ function editLine(id) {
     oldValue = parseFloat(oldValue)
     const oldType = columns[2].textContent;
     const oldDate = columns[3].textContent;
+    const oldDateFormatted = oldDate.split('/').reverse().join('-')
 
     line.innerHTML = `
         <td><input type="text" id="edit-cat-${id}" value="${oldCategory}" class="form-control"></td>
         <td><input type="number" id="edit-val-${id}" value="${oldValue}" class="form-control"></td>
         <td>
             <select id="edit-type-${id}" class="form-control">
-                <option value="income" ${oldType === 'receita' ? 'selected' : ''}>Receita</option>
-                <option value="expense" ${oldType === 'despesa' ? 'selected' : ''}>Despesa</option>
+                <option value="receita" ${oldType === 'receita' ? 'selected' : ''}>Receita</option>
+                <option value="despesa" ${oldType === 'despesa' ? 'selected' : ''}>Despesa</option>
             </select>
         </td>
-        <td><input type="date" id="edit-date-${id}" value="${oldDate}" class="form-control"></td>
+        <td><input type="date" id="edit-date-${id}" value="${oldDateFormatted}" class="form-control"></td>
         <td>
             <button onclick="updateItem(${id})" class="btn-save">✅</button>
             <button onclick="loadData()" class="btn-cancel">❌</button>
         </td>
     `;
 
-    
 }
 
 async function deleteItem(id) {
@@ -169,7 +169,7 @@ async function updateItem(id) {
     try {
         const response = await fetch(`${API_URL}/update-item/${id}`, {
             method: "PUT",
-            body: payload,
+            body: JSON.stringify(payload),
             headers: {
                 "Content-Type": "application/json"
             }

@@ -54,7 +54,7 @@ async def remove_item(item_id: int):
     response = delete_item(item_id)
     return response
 
-@app.put("/update-item/{item_id}", status_code=status.HTTP_200_OK)
+@app.put("/update-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def change_item(item_id: int, item: Item):
     response = update_item(item_id, item)
     return response
