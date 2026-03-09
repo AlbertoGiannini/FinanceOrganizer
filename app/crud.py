@@ -17,6 +17,7 @@ def get_all_items():
     response = (
         db.table("finance")
         .select("*")
+        .order("id", desc=True)
         .execute()
     )
     return response.data

@@ -2,6 +2,7 @@ from typing import Literal
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from datetime import datetime
 from schemas import Item
 from crud import *
@@ -18,6 +19,10 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def read_index():
+    return FileResponse('static/index.html')
 
 @app.get("/get_all", status_code=status.HTTP_200_OK)
 async def teste():

@@ -12,11 +12,11 @@ async function loadData() {
             const valueColor = item.type === 'receita' ? 'green' : 'red';
             const date_item = item.date_item.split('-').reverse().join('/'); 
             line.innerHTML = `
-                <td>${item.category}</td>
-                <td style="color: ${valueColor};">R$ ${item.value}</td>
-                <td>${item.type}</td>
-                <td>${date_item}</td>
-                <td>
+                <td data-label="Descrição">${item.category}</td>
+                <td data-label="Valor" style="color: ${valueColor};">R$ ${item.value}</td>
+                <td data-label="Tipo">${item.type}</td>
+                <td data-label="Data">${date_item}</td>
+                <td data-label="Ações">
                     <button class="edit-button">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
@@ -73,9 +73,6 @@ form.addEventListener("submit", async (event) => {
         if (response.ok) {
             alert("Item adicionado com sucesso!");
             form.reset();
-            loadData();
-            loadAmount();
-            loadMonthlyExpensesIncomes();
         } else {
             alert("Erro ao adicionar o item. Por favor, tente novamente.");
         }
@@ -104,7 +101,7 @@ async function tableButtons() {
         }
         if (updateButton) {
             updateButton.addEventListener("click", async function(event) {
-            editLine(id);
+            await editLine(id);
             
         });
         }
@@ -168,9 +165,6 @@ async function updateItem(id) {
         type: document.getElementById(`edit-type-${id}`).value,
         date_item: document.getElementById(`edit-date-${id}`).value
     };
-    console.log(payload)
-    console.log(JSON.stringify(payload))
-    console.log(id)
     try {
         const response = await fetch(`${API_URL}/update-item/${id}`, {
             method: "PUT",
@@ -182,6 +176,7 @@ async function updateItem(id) {
         if (response.status === 204) {
             loadAmount();
             loadData();
+            loadMonthlyExpensesIncomes();
         } else {
             alert("Erro ao editar o item. Por favor, tente novamente.");
         

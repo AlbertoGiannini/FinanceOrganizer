@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Organizador Financeiro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
@@ -68,10 +68,11 @@
             <table id="transactions-table">
                 <thead>
                     <tr>
-                        <th>Descrição</th>
-                        <th>Valor</th>
-                        <th>Tipo</th>
-                        <th>Data</th>
+                        <th data-label="Descrição">Descrição</th>
+                        <th data-label="Valor">Valor</th>
+                        <th data-label="Tipo">Tipo</th>
+                        <th data-label="Data">Data</th>
+                        <th data-label="Ações">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -83,6 +84,6 @@
     <footer>
         <p>&copy; 2026 Meu Organizador Financeiro. Todos os direitos reservados.</p>
     </footer>
-<script src="js/script.js"></script>
+<script src="/static/js/script.js"></script>
 </body>
 </html>
