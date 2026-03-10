@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:8000/items";
 
 async function loadData() {
     try {
@@ -46,7 +46,7 @@ async function loadAmount() {
     }
 }
 
-loadAmount()
+loadAmount();
 
 const form = document.getElementById("transaction-form");
 form.addEventListener("submit", async (event) => {
