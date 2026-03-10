@@ -2,14 +2,13 @@ from database import supabase_connection as db
 from schemas import Item
 import calendar
 
-def insert_item(item: Item):
+def insert_item(item: dict):
     try:
-        data = item
         breakpoint()
-        data['date_item'] = data['date_item'].isoformat()
-        if data["type"] not in ["receita", "despesa"]:
+        item['date_item'] = item['date_item'].isoformat()
+        if item["type"] not in ["receita", "despesa"]:
             return "Invalid type. Must be 'receita' or 'despesa'."
-        response = db.table("finance").insert(data).execute()
+        response = db.table("finance").insert(item).execute()
         return f"Item inserted successfully {response.data}"
     except Exception as e:
         return f"Error inserting item: {str(e)}"
