@@ -27,7 +27,7 @@ async def login(user: User, response: Response):
         })
         if auth_response is None:
             raise HTTPException(status_code=400, detail="Login failed")
-        access_token = auth_response.access_token
+        access_token = auth_response.session.access_token
         response =  RedirectResponse('/', status_code=303)
         response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
         return response

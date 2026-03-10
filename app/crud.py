@@ -4,8 +4,9 @@ import calendar
 
 def insert_item(item: Item):
     try:
-        data = item.model_dump()
-        data['date_item'] = item.date_item.isoformat()
+        data = item
+        breakpoint()
+        data['date_item'] = data['date_item'].isoformat()
         if data["type"] not in ["receita", "despesa"]:
             return "Invalid type. Must be 'receita' or 'despesa'."
         response = db.table("finance").insert(data).execute()
