@@ -7,3 +7,7 @@ class Item(BaseModel):
     type: str = Literal["receita", "despesa"]
     category: str = Field(min_length=1, max_length=50)
     date_item: date
+
+class User(BaseModel):
+    email: str
+    password: str

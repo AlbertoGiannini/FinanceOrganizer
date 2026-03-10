@@ -1,16 +1,14 @@
 from typing import Literal
-from fastapi import APIRouter, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, HTTPException, status, Depends
 from datetime import datetime
 from schemas import Item
 from crud import *
+from auth import get_current_user
 
 router = APIRouter(prefix="/items", tags=["Finance Transactions"])
 
 @router.get("/get_all", status_code=status.HTTP_200_OK)
-async def teste():
+async def get_all(current_user: dict = Depends(get_current_user)):
     response = get_all_items()
     return response
 

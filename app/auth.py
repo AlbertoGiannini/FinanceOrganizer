@@ -12,8 +12,8 @@ async def auth_middleware(request: Request, call_next):
         request.headers.__dict__['list'].append(
             (b"authorization", f"Bearer {token}".encode())   
         )
-        response = await call_next(request)
-        return response
+    response = await call_next(request)
+    return response
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
