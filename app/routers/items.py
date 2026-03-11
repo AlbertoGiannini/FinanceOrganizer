@@ -9,7 +9,8 @@ router = APIRouter(prefix="/items", tags=["Finance Transactions"])
 
 @router.get("/get_all", status_code=status.HTTP_200_OK)
 async def get_all(current_user: dict = Depends(get_current_user)):
-    response = get_all_items()
+    user_id = current_user.get("sub")
+    response = get_all_items(user_id)
     return response
 
 @router.post("/send-item", status_code=status.HTTP_201_CREATED)
@@ -27,7 +28,8 @@ async def get_income_expenses(type: Literal["receita", "despesa"], current_user:
 
 @router.get("/total-amount", status_code=status.HTTP_200_OK)
 async def total_amount(current_user: dict = Depends(get_current_user)):
-    items = get_all_items()
+    user_id = current_user.get("sub")
+    items = get_all_items(user_id)
     total_incomes = sum(item['value'] for item in items if item['type'] == "receita")
     total_expenses = sum(item['value'] for item in items if item['type'] == "despesa")
     return {
@@ -58,5 +60,6 @@ async def get_month_expenses(
         year: int = datetime.now().year,
         current_user: dict = Depends(get_current_user)
     ):
-    response = get_by_month(type, month, year)
+    user_id = current_user.get("sub")
+    response = get_by_month(type, month, year, user_id)
     return response
