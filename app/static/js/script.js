@@ -73,6 +73,9 @@ form.addEventListener("submit", async (event) => {
         if (response.ok) {
             alert("Item adicionado com sucesso!");
             form.reset();
+            loadData();
+            loadAmount();
+            loadMonthlyExpensesIncomes();
         } else {
             alert("Erro ao adicionar o item. Por favor, tente novamente.");
         }

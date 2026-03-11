@@ -56,8 +56,8 @@ def update_item(item_id: int, item: Item, user_id: str):
     response = (
         db.table("finance")
         .update(item_json)
-        .eq('user_id', user_id)
         .eq("id", item_id)
+        .eq('user_id', user_id)
         .execute()
     )
     return response.data

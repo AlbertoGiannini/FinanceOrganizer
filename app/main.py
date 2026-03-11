@@ -1,10 +1,10 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from routers import items, auth_routes
 from crud import *
-from auth import auth_middleware
+from auth import auth_middleware, get_current_user
 
 
 app = FastAPI()
@@ -32,6 +32,13 @@ async def login():
 async def register():
     return FileResponse('static/register.html')
 
+@app.get('/logout')
+async def logout(response: Response):
+    response = RedirectResponse('/login', status_code=303)
+    response.delete_cookie(key='access_token', path='/')
+    return response
+
 @app.get("/")
-async def read_index():
+async def read_index(current_user: dict = Depends(get_current_user)):
+    print(current_user)
     return FileResponse('static/index.html')
