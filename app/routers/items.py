@@ -23,7 +23,8 @@ async def send_item(item: Item, current_user: dict = Depends(get_current_user)):
 
 @router.get("/get-income-expenses", status_code=status.HTTP_200_OK)
 async def get_income_expenses(type: Literal["receita", "despesa"], current_user: dict = Depends(get_current_user)):
-    response = get_all_expense_incomes(type)
+    user_id = current_user.get("sub")
+    response = get_all_expense_incomes(type, user_id)
     return response
 
 @router.get("/total-amount", status_code=status.HTTP_200_OK)
@@ -40,17 +41,20 @@ async def total_amount(current_user: dict = Depends(get_current_user)):
 
 @router.get("/income-expenses-by-category", status_code=status.HTTP_200_OK)
 async def income_expenses_by_category(type: str, category: str = None, current_user: dict = Depends(get_current_user)):
-    response = get_expenses_income_by_category(type, category)
+    user_id = current_user.get("sub")
+    response = get_expenses_income_by_category(type, category, user_id)
     return response
 
 @router.delete("/delete-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_item(item_id: int, current_user: dict = Depends(get_current_user)):
-    response = delete_item(item_id)
+    user_id = current_user.get("sub")
+    response = delete_item(item_id, user_id)
     return response
 
 @router.put("/update-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def change_item(item_id: int, item: Item, current_user: dict = Depends(get_current_user)):
-    response = update_item(item_id, item)
+    user_id = current_user.get("sub")
+    response = update_item(item_id, item, user_id)
     return response
 
 @router.get("/get-month-expenses", status_code=status.HTTP_200_OK)
