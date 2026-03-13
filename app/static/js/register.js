@@ -20,6 +20,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         body: JSON.stringify(data)
     });
     if (response.ok) {
+        alert('Cadastro realizado com sucesso! Um email de confirmação foi enviado para o seu e-mail.')
         window.location.href = "/login";
     } else {
         alert("Erro ao fazer login. Por favor, tente novamente.");
