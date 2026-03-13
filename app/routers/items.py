@@ -47,15 +47,31 @@ async def income_expenses_by_category(type: str, category: str = None, current_u
 
 @router.delete("/delete-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_item(item_id: int, current_user: dict = Depends(get_current_user)):
-    user_id = current_user.get("sub")
-    response = delete_item(item_id, user_id)
-    return response
+    try:
+        user_id = current_user.get("sub")
+        response = delete_item(item_id, user_id)
+        if not response:
+            raise HTTPException(status_code=403, detail='Forbidden')
+        return response
+    except PermissionDeniedError as err:
+        raise HTTPException(status_code=403, detail=str(err))    
+
+    except Exception as err:
+        raise HTTPException(status_code=500, detail='Internal Server Error')
 
 @router.put("/update-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def change_item(item_id: int, item: Item, current_user: dict = Depends(get_current_user)):
-    user_id = current_user.get("sub")
-    response = update_item(item_id, item, user_id)
-    return response
+    try:
+        user_id = current_user.get("sub")
+        response = update_item(item_id, item, user_id)
+        if not response:
+            raise HTTPException(status_code=403, detail='Forbidden')
+        return response
+    except PermissionDeniedError as err:
+        raise HTTPException(status_code=403, detail=str(err))    
+
+    except Exception as err:
+        raise HTTPException(status_code=500, detail='Internal Server Error')
 
 @router.get("/get-month-expenses", status_code=status.HTTP_200_OK)
 async def get_month_expenses(

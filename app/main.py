@@ -40,5 +40,4 @@ async def logout(response: Response):
 
 @app.get("/")
 async def read_index(current_user: dict = Depends(get_current_user)):
-    print(current_user)
     return FileResponse('static/index.html')

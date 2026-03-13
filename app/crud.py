@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from database import supabase_connection as db
 from schemas import Item
 import calendar
@@ -47,6 +48,8 @@ def delete_item(item_id: int, user_id: str):
         .eq("id", item_id)
         .execute()
     )
+    if not response.data:
+        raise PermissionDeniedError('No data')
     return f"Item with id {item_id} deleted successfully. {response.data}"
 
 def update_item(item_id: int, item: Item, user_id: str):
@@ -60,6 +63,8 @@ def update_item(item_id: int, item: Item, user_id: str):
         .eq('user_id', user_id)
         .execute()
     )
+    if not response.data:
+        raise PermissionDeniedError('No data')
     return response.data
 
 def get_by_month(type: str, month: int, year: int, user_id: str):
@@ -76,3 +81,6 @@ def get_by_month(type: str, month: int, year: int, user_id: str):
         .execute()
     )
     return response.data
+
+class PermissionDeniedError(Exception):
+    pass
