@@ -41,3 +41,7 @@ async def logout(response: Response):
 @app.get("/")
 async def read_index(current_user: dict = Depends(get_current_user)):
     return FileResponse('static/index.html')
+
+@app.exception_handler(status.HTTP_401_UNAUTHORIZED)
+async def auth_exception_handler(request: Request, exe: HTTPException):
+    return RedirectResponse(url='/login', status_code=status.HTTP_303_SEE_OTHER)

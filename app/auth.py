@@ -1,7 +1,7 @@
 from fastapi import Request, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
-from database import SUPABASE_JWT_SECRET
+from database import SUPABASE_JWT_SECRET, supabase_connection
 
 security = HTTPBearer()
 
@@ -24,6 +24,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         user_id = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid auth credentials")
+        supabase_connection.postgrest.auth(token)
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
