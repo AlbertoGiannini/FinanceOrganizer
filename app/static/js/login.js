@@ -1,4 +1,4 @@
-API_URL = "http://127.0.0.1:8000/auth"
+API_URL = "https://myfinancesaver.vercel.app/auth"
 
 const form = document.querySelector('form');
 document.getElementById('login-form').addEventListener('submit', async function(event) {
