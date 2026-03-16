@@ -3,21 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizador Financeiro</title>
+    <title>MyFinanceSaver</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
     <header>
-        <h1>Meu Organizador Financeiro</h1>
-        <nav>
+        <h1>MyFinanceSaver</h1>
+        <nav class="desktop-nav">
             <a href="#">Dashboard</a>
             <a href="#">Relatórios</a>
             <a href="#">Configurações</a>
             <a href="/logout">Sair</a>
         </nav>
+        <button class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
     </header>
+
+    <div class="mobile-nav">
+        <button class="close-nav-button"><i class="fas fa-times"></i></button>
+        <a href="#">Dashboard</a>
+        <a href="#">Relatórios</a>
+        <a href="#">Configurações</a>
+        <a href="/logout">Sair</a>
+    </div>
 
     <main>
         <section class="summary">

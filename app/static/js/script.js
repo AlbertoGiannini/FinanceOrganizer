@@ -1,3 +1,4 @@
+
 // const API_URL = "https://myfinancesaver.vercel.app/items";
 const API_URL = "http://127.0.0.1:8000/items";
 
@@ -41,7 +42,7 @@ async function loadAmount() {
         const response = await fetch(`${API_URL}/total-amount`);
         const data = await response.json();
         const amountElement = document.getElementById("current-balance");
-        amountElement.textContent = `Saldo Atual: R$ ${data["total-amount"].toFixed(2)}`;
+        amountElement.textContent = `R$ ${data["total-amount"].toFixed(2)}`;
     } catch (error) {
         console.error("Erro ao carregar o saldo:", error);
     }
@@ -218,3 +219,31 @@ async function loadMonthlyExpensesIncomes() {
 }
 
 loadMonthlyExpensesIncomes();
+
+const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+const mobileNav = document.querySelector('.mobile-nav');
+const closeNavButton = document.querySelector('.close-nav-button');
+const navLinks = document.querySelectorAll('.mobile-nav a');
+
+function openNav() {
+    mobileNav.classList.add('active');
+    document.body.classList.add('mobile-nav-open');
+}
+
+function closeNav() {
+    mobileNav.classList.remove('active');
+    document.body.classList.remove('mobile-nav-open');
+}
+
+mobileNavToggle.addEventListener('click', openNav);
+closeNavButton.addEventListener('click', closeNav);
+
+navLinks.forEach(link => {
+    link.addEventListener('click', closeNav);
+});
+
+document.addEventListener('click', (event) => {
+    if (mobileNav.classList.contains('active') && !mobileNav.contains(event.target) && !mobileNavToggle.contains(event.target)) {
+        closeNav();
+    }
+});
