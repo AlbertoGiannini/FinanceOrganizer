@@ -14,6 +14,8 @@ async def signup(user: User, response: Response):
         })
         if auth_response.user is None:
             raise HTTPException(status_code=400, detail="Signup failed")
+        if len(auth_response.user.identities) == 0:
+            raise HTTPException(status_code=400, detail='User already exists')
         return RedirectResponse('/login', status_code=303)
     except Exception as err:
         raise HTTPException(status_code=400, detail=str(err))
