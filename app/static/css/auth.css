@@ -1,13 +1,15 @@
 /* CSS for login and register pages */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #f5f7fa;
-    --text-color: #333;
-    --border-color: #e0e0e0;
-    --white-color: #fff;
-    --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --accent-green: #00ffaa;
+    --border-color: #3a3a3a;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -17,9 +19,9 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--secondary-color);
-    color: var(--text-color);
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,15 +35,16 @@ body {
 }
 
 .auth-box {
-    background-color: var(--white-color);
+    background-color: var(--bg-secondary);
     padding: 2.5rem;
     border-radius: 8px;
     box-shadow: var(--shadow);
     text-align: center;
+    border: 1px solid var(--border-color);
 }
 
 .auth-box h1 {
-    color: var(--primary-color);
+    color: var(--accent-green);
     margin-bottom: 0.5rem;
     font-size: 2rem;
     font-weight: 700;
@@ -49,7 +52,7 @@ body {
 
 .auth-box p {
     margin-bottom: 2rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .form-group {
@@ -61,40 +64,42 @@ body {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: #555;
+    color: var(--text-secondary);
 }
 
 .form-group input {
     width: 100%;
-    padding: 0.8rem 1rem;
+    padding: 1rem;
+    background-color: var(--bg-tertiary);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    border-color: var(--accent-green);
 }
 
 button {
     width: 100%;
-    background-color: var(--primary-color);
-    color: var(--white-color);
+    background-color: var(--accent-green);
+    color: var(--bg-primary);
     border: none;
     padding: 1rem;
     font-size: 1.1rem;
     font-weight: 700;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-bottom: 1.5rem;
 }
 
 button:hover {
-    background-color: #3a7ac8;
+    background-color: #00dd99;
 }
 
 .switch-auth p {
@@ -103,7 +108,7 @@ button:hover {
 }
 
 .switch-auth a {
-    color: var(--primary-color);
+    color: var(--accent-green);
     text-decoration: none;
     font-weight: 500;
 }
