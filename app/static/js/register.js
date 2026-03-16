@@ -24,6 +24,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         alert('Cadastro realizado com sucesso! Um email de confirmação foi enviado para o seu e-mail.')
         window.location.href = "/login";
     } else {
-        alert("Erro ao fazer login. Por favor, tente novamente.");
+        const responseError = await response.json();
+        alert(`Erro ao fazer login. Por favor, tente novamente. - ${responseError.detail}`);
     }
 });

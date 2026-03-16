@@ -16,6 +16,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     if (response.ok) {
         window.location.href = "/";
     } else {
-        alert("Erro ao fazer login. Por favor, tente novamente.");
+        const responseError = await response.json();
+        alert(`Erro ao fazer login. Por favor, tente novamente. - ${responseError.detail}`);
     }
 });
