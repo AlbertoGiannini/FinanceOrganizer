@@ -1,5 +1,5 @@
 from typing import Literal
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Form, HTTPException, status, Depends
 from datetime import datetime
 from schemas import Item
 from crud import *
@@ -14,8 +14,16 @@ async def get_all(current_user: dict = Depends(get_current_user)):
     return response
 
 @router.post("/send-item", status_code=status.HTTP_201_CREATED)
-async def send_item(item: Item, current_user: dict = Depends(get_current_user)):
+async def send_item(
+    value: float = Form(...),
+    type: str = Form(...),
+    category: str = Form(...),
+    date_item: str = Form(...),
+    current_user: dict = Depends(get_current_user)
+):
+    breakpoint()
     user_id = current_user.get("sub")
+    item = Item(value=value, type=type, category=category, date_item=date_item)
     new_item = item.model_dump()
     new_item['user_id'] = user_id
     response = insert_item(new_item)

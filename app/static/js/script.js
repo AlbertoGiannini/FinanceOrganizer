@@ -1,6 +1,6 @@
 
-API_URL = "https://myfinancesaver.vercel.app/items";
-//API_URL = "http://127.0.0.1:8000/items";
+//API_URL = "https://myfinancesaver.vercel.app/items";
+API_URL = "http://127.0.0.1:8000/items";
 
 async function loadData() {
     try {
@@ -35,7 +35,7 @@ async function loadData() {
     }
 }
 
-loadData();
+// loadData();
 
 async function loadAmount() {
     try {
@@ -48,9 +48,9 @@ async function loadAmount() {
     }
 }
 
-loadAmount();
+// //loadAmount();
 
-const form = document.getElementById("transaction-form");
+/*const form = document.getElementById("transaction-form");
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const value = parseFloat(document.getElementById("amount").value);
@@ -75,9 +75,9 @@ form.addEventListener("submit", async (event) => {
         if (response.ok) {
             alert("Item adicionado com sucesso!");
             form.reset();
-            loadData();
-            loadAmount();
-            loadMonthlyExpensesIncomes();
+            //loadData();
+            //loadAmount();
+            //loadMonthlyExpensesIncomes();
         } else {
             alert("Erro ao adicionar o item. Por favor, tente novamente.");
         }
@@ -85,7 +85,7 @@ form.addEventListener("submit", async (event) => {
             console.error("Erro ao enviar o item:", error);
             alert("Erro ao enviar o item. Por favor, tente novamente.");
         }
-});
+});*/
 
 async function tableButtons() {
     const tableBody = document.querySelectorAll("#transactions-table tr");
@@ -97,9 +97,9 @@ async function tableButtons() {
             deleteButton.addEventListener("click", async function(event) {
             if (id) {
                 await deleteItem(id);
-                loadData();
-                loadAmount();
-                loadMonthlyExpensesIncomes();
+                //loadData();
+                //loadAmount();
+                //loadMonthlyExpensesIncomes();
                 
             }
         });
@@ -112,6 +112,8 @@ async function tableButtons() {
         }
     });
 }
+
+tableButtons();
 
 function editLine(id) {
     const line = document.querySelector(`tr[id="${id}"]`);
@@ -151,8 +153,8 @@ async function deleteItem(id) {
             method: "DELETE"
         });
         if (response.status === 204) {
-            loadAmount();
-            loadData();
+            //loadAmount();
+            //loadData();
         } else {
             alert("Erro ao deletar o item. Por favor, tente novamente.");
         
@@ -179,9 +181,9 @@ async function updateItem(id) {
             }
         });
         if (response.status === 204) {
-            loadAmount();
-            loadData();
-            loadMonthlyExpensesIncomes();
+            //loadAmount();
+            //loadData();
+            //loadMonthlyExpensesIncomes();
         } else {
             alert("Erro ao editar o item. Por favor, tente novamente.");
         
@@ -218,7 +220,7 @@ async function loadMonthlyExpensesIncomes() {
     }
 }
 
-loadMonthlyExpensesIncomes();
+//loadMonthlyExpensesIncomes();
 
 const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
 const mobileNav = document.querySelector('.mobile-nav');

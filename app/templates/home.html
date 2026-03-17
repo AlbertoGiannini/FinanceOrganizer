@@ -34,15 +34,15 @@
             <div class="summary-cards">
                 <div class="card">
                     <h3>Saldo Atual</h3>
-                    <p id="current-balance"></p>
+                    <p id="current-balance">R$ {{ total_amount['total-amount'] }}</p>
                 </div>
                 <div class="card income">
                     <h3>Receitas do Mês</h3>
-                    <p class="income-text" id="income"></p>
+                    <p class="income-text" id="income">R$ {{ total_amount['total_incomes'] }}</p>
                 </div>
                 <div class="card expense">
                     <h3>Despesas do Mês</h3>
-                    <p class="expense-text" id="expense-month"></p>
+                    <p class="expense-text" id="expense-month">R$ {{ total_amount['total_expenses'] }}</p>
                 </div>
             </div>
         </section>
@@ -86,6 +86,27 @@
                     </tr>
                 </thead>
                 <tbody id="table-body">
+                    {% for item in items %}
+                        <tr id="{{ item.id }}">
+                            {% if item.type == 'receita' %}
+                                {% set valueColor = 'green' %}
+                            {%else%}
+                                {% set valueColor = 'red' %}
+                            {% endif %}
+                            <td data-label="Descrição">{{ item.category }}</td>
+                            <td data-label="Valor" style="color: {{ valueColor }}">R$ {{ item.value }}</td>
+                            <td data-label="Tipo">{{ item.type }}</td>
+                            <td data-label="Data">{{ item.date_item }}</td>
+                            <td data-label="Ações">
+                                <button class="edit-button">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button class="delete-button">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </section>
