@@ -27,20 +27,6 @@ app.middleware("http")(auth_middleware)
 app.include_router(auth_routes.router)
 app.include_router(items.router)
 
-@app.get('/login')
-async def login():
-    return FileResponse('static/login.html')
-
-@app.get('/register')
-async def register():
-    return FileResponse('static/register.html')
-
-@app.get('/logout')
-async def logout(response: Response):
-    response = RedirectResponse('/login', status_code=303)
-    response.delete_cookie(key='access_token', path='/')
-    return response
-
 @app.get("/")
 async def read_index(request: Request, current_user: dict = Depends(get_current_user)):
     all_items = await items.get_all(current_user)
