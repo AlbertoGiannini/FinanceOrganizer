@@ -1,5 +1,6 @@
 from typing import Literal
 from fastapi import APIRouter, Form, HTTPException, status, Depends
+from fastapi.responses import RedirectResponse
 from datetime import datetime
 from schemas import Item
 from crud import *
@@ -21,13 +22,12 @@ async def send_item(
     date_item: str = Form(...),
     current_user: dict = Depends(get_current_user)
 ):
-    breakpoint()
     user_id = current_user.get("sub")
     item = Item(value=value, type=type, category=category, date_item=date_item)
     new_item = item.model_dump()
     new_item['user_id'] = user_id
-    response = insert_item(new_item)
-    return response
+    insert_item(new_item)
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 @router.get("/get-income-expenses", status_code=status.HTTP_200_OK)
 async def get_income_expenses(type: Literal["receita", "despesa"], current_user: dict = Depends(get_current_user)):
