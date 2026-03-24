@@ -2,91 +2,6 @@
 //API_URL = "https://myfinancesaver.vercel.app/items";
 API_URL = "http://127.0.0.1:8000/items";
 
-async function loadData() {
-    try {
-        const response = await fetch(`${API_URL}/get_all`);
-        const data = await response.json();
-        const tableBody = document.getElementById("table-body");
-        tableBody.innerHTML = "";
-        data.forEach(item => {
-            const line = document.createElement("tr");
-            line.setAttribute("id", item.id);
-            const valueColor = item.type === 'receita' ? 'green' : 'red';
-            const date_item = item.date_item.split('-').reverse().join('/'); 
-            line.innerHTML = `
-                <td data-label="Descrição">${item.category}</td>
-                <td data-label="Valor" style="color: ${valueColor};">R$ ${item.value}</td>
-                <td data-label="Tipo">${item.type}</td>
-                <td data-label="Data">${date_item}</td>
-                <td data-label="Ações">
-                    <button class="edit-button">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="delete-button">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(line);
-        });
-        tableButtons();
-    } catch (error) {
-        console.error("Erro ao carregar os dados:", error);
-    }
-}
-
-// loadData();
-
-async function loadAmount() {
-    try {
-        const response = await fetch(`${API_URL}/total-amount`);
-        const data = await response.json();
-        const amountElement = document.getElementById("current-balance");
-        amountElement.textContent = `R$ ${data["total-amount"].toFixed(2)}`;
-    } catch (error) {
-        console.error("Erro ao carregar o saldo:", error);
-    }
-}
-
-// //loadAmount();
-
-/*const form = document.getElementById("transaction-form");
-form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const value = parseFloat(document.getElementById("amount").value);
-    const type = document.getElementById("type").value;
-    const category = document.getElementById("category").value;
-    const date = document.getElementById("date").value;
-
-    const newTransaction = {
-        category: category,
-        value: value,
-        type: type,
-        date_item: date
-    };
-    try {
-        const response = await fetch(`${API_URL}/send-item`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(newTransaction)
-        });
-        if (response.ok) {
-            alert("Item adicionado com sucesso!");
-            form.reset();
-            //loadData();
-            //loadAmount();
-            //loadMonthlyExpensesIncomes();
-        } else {
-            alert("Erro ao adicionar o item. Por favor, tente novamente.");
-        }
-        } catch (error) {
-            console.error("Erro ao enviar o item:", error);
-            alert("Erro ao enviar o item. Por favor, tente novamente.");
-        }
-});*/
-
 async function tableButtons() {
     const tableBody = document.querySelectorAll("#transactions-table tr");
     tableBody.forEach(element => {
@@ -97,17 +12,14 @@ async function tableButtons() {
             deleteButton.addEventListener("click", async function(event) {
             if (id) {
                 await deleteItem(id);
-                //loadData();
-                //loadAmount();
-                //loadMonthlyExpensesIncomes();
-                
+                window.location.reload();
             }
         });
         }
         if (updateButton) {
             updateButton.addEventListener("click", async function(event) {
             await editLine(id);
-            
+            window.location.reload();
         });
         }
     });

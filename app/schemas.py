@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from typing import Literal
 from datetime import date
 
@@ -11,3 +11,13 @@ class Item(BaseModel):
 class User(BaseModel):
     email: str
     password: str
+    confirm_password: str
+
+    @model_validator(mode='after')
+    def check_passwords(self):
+        if self.password != self.confirm_password:
+            raise UserException('As senhas não coincidem.')
+        return self
+
+class UserException(Exception):
+    pass
