@@ -5,21 +5,11 @@ API_URL = "http://127.0.0.1:8000/items";
 async function tableButtons() {
     const tableBody = document.querySelectorAll("#transactions-table tr");
     tableBody.forEach(element => {
-        const deleteButton = element.querySelector(".delete-button");
         const updateButton = element.querySelector(".edit-button");
         const id = element.id;
-        if (deleteButton) {
-            deleteButton.addEventListener("click", async function(event) {
-            if (id) {
-                await deleteItem(id);
-                window.location.reload();
-            }
-        });
-        }
         if (updateButton) {
             updateButton.addEventListener("click", async function(event) {
             await editLine(id);
-            window.location.reload();
         });
         }
     });
@@ -50,31 +40,10 @@ function editLine(id) {
         <td><input type="date" id="edit-date-${id}" value="${oldDateFormatted}" class="form-control"></td>
         <td>
             <button onclick="updateItem(${id})" class="btn-save">✅</button>
-            <button onclick="loadData()" class="btn-cancel">❌</button>
+            <button class="btn-cancel">❌</button>
         </td>
     `;
 
-}
-
-async function deleteItem(id) {
-    if (!confirm("Tem certeza que deseja excluir este item?")) {
-        return;
-    }
-    try {
-        const response = await fetch(`${API_URL}/delete-item/${id}`, {
-            method: "DELETE"
-        });
-        if (response.status === 204) {
-            //loadAmount();
-            //loadData();
-        } else {
-            alert("Erro ao deletar o item. Por favor, tente novamente.");
-        
-        }
-    } catch (error) {
-        console.error("Erro ao deletar o item:", error);
-        alert("Erro ao deletar o item. Por favor, tente novamente.");
-    }
 }
 
 async function updateItem(id) {
@@ -93,9 +62,7 @@ async function updateItem(id) {
             }
         });
         if (response.status === 204) {
-            //loadAmount();
-            //loadData();
-            //loadMonthlyExpensesIncomes();
+            window.location.reload();
         } else {
             alert("Erro ao editar o item. Por favor, tente novamente.");
         
@@ -159,5 +126,37 @@ navLinks.forEach(link => {
 document.addEventListener('click', (event) => {
     if (mobileNav.classList.contains('active') && !mobileNav.contains(event.target) && !mobileNavToggle.contains(event.target)) {
         closeNav();
+    }
+});
+
+
+// --- INTERCEPTAÇÃO DE ALERTAS DE CONFIRMAÇÃO (SWEETALERT2) ---
+document.body.addEventListener('htmx:confirm', function(e) {
+    // Verifica se o elemento clicado tem o nosso atributo customizado
+    if (e.detail.elt.hasAttribute('confirm-with-sweet-alert')) {
+        
+        // Pausa a requisição do HTMX
+        e.preventDefault(); 
+        
+        // Chama o pop-up do SweetAlert2
+        Swal.fire({
+            title: 'Deletar este item?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+            width: '250px',        // Trava a largura máxima para não estourar na tela    // Diminui o espaço em branco dentro do alerta
+                customClass: {
+                    title: 'swal-title-small', // (Opcional) Você pode criar essa classe no seu CSS se quiser diminuir mais a fonte
+                    actions: 'swal-actions-mobile'
+                }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Libera o HTMX para enviar a requisição ao FastAPI
+                e.detail.issueRequest(true); 
+            }
+        });
     }
 });

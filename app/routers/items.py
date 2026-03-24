@@ -1,12 +1,15 @@
 from typing import Literal
-from fastapi import APIRouter, Form, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Request, Depends, Form
 from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 from datetime import datetime
 from schemas import Item
 from crud import *
 from auth import get_current_user
 
 router = APIRouter(prefix="/items", tags=["Finance Transactions"])
+
+templates = Jinja2Templates(directory="templates")
 
 @router.get("/get_all", status_code=status.HTTP_200_OK)
 async def get_all(current_user: dict = Depends(get_current_user)):
@@ -16,6 +19,7 @@ async def get_all(current_user: dict = Depends(get_current_user)):
 
 @router.post("/send-item", status_code=status.HTTP_201_CREATED)
 async def send_item(
+    request: Request,
     value: float = Form(...),
     type: str = Form(...),
     category: str = Form(...),
@@ -27,7 +31,7 @@ async def send_item(
     new_item = item.model_dump()
     new_item['user_id'] = user_id
     insert_item(new_item)
-    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    return templates.TemplateResponse(request, "item.html", context={"item": new_item})
 
 @router.get("/get-income-expenses", status_code=status.HTTP_200_OK)
 async def get_income_expenses(type: Literal["receita", "despesa"], current_user: dict = Depends(get_current_user)):
@@ -54,13 +58,13 @@ async def income_expenses_by_category(type: str, category: str = None, current_u
     return response
 
 @router.delete("/delete-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def remove_item(item_id: int, current_user: dict = Depends(get_current_user)):
+async def remove_item(request: Request, item_id: int, current_user: dict = Depends(get_current_user)):
     try:
         user_id = current_user.get("sub")
         response = delete_item(item_id, user_id)
         if not response:
             raise HTTPException(status_code=403, detail='Forbidden')
-        return response
+        return templates.TemplateResponse(request, "home.html")
     except PermissionDeniedError as err:
         raise HTTPException(status_code=403, detail=str(err))    
 

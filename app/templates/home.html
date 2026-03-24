@@ -6,6 +6,8 @@
     <title>MyFinanceSaver</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -49,7 +51,11 @@
 
         <section class="new-transaction">
             <h2>Adicionar Nova Transação</h2>
-            <form id="transaction-form" action="/items/send-item" method="post">
+            <form id="transaction-form"
+                hx-post="/items/send-item"
+                hx-target="#table-body"
+                hx-swap="afterbegin"
+                hx-on::after-request="this.reset()">
                 <div class="form-group">
                     <label for="category">Categoria</label>
                     <input type="text" id="category" name="category" placeholder="Ex: Salário, Aluguel" required>
@@ -86,27 +92,9 @@
                     </tr>
                 </thead>
                 <tbody id="table-body">
-                    {% for item in items %}
-                        <tr id="{{ item.id }}">
-                            {% if item.type == 'receita' %}
-                                {% set valueColor = 'green' %}
-                            {%else%}
-                                {% set valueColor = 'red' %}
-                            {% endif %}
-                            <td data-label="Descrição">{{ item.category }}</td>
-                            <td data-label="Valor" style="color: {{ valueColor }}">R$ {{ item.value }}</td>
-                            <td data-label="Tipo">{{ item.type }}</td>
-                            <td data-label="Data">{{ item.date_item }}</td>
-                            <td data-label="Ações">
-                                <button class="edit-button">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="delete-button">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                    {%- for item in items -%}
+                        {%- include 'item.html' -%}
+                    {%- endfor -%}
                 </tbody>
             </table>
         </section>
