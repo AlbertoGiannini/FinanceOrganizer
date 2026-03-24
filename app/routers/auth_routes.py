@@ -2,7 +2,8 @@ from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from starlette.responses import Response, RedirectResponse
 from database import supabase_connection as supabase
-from schemas import User, UserException
+from supabase import AuthError
+from schemas import UserLogin, UserRegister, UserException
 
 router = APIRouter(tags=['Authentication'])
 
@@ -20,7 +21,7 @@ async def signup(
     confirm_password: str = Form(...)
 ):
     try:
-        user = User(email=email, password=password, confirm_password=confirm_password)
+        user = UserRegister(email=email, password=password, confirm_password=confirm_password)
         auth_response = supabase.auth.sign_up({
             'email': user.email,
             'password': user.password
@@ -44,7 +45,7 @@ async def login(
     email: str = Form(...),
     password: str = Form(...)):
     try:
-        user = User(email=email, password=password, confirm_password=password)
+        user = UserLogin(email=email, password=password)
         auth_response = supabase.auth.sign_in_with_password({
             'email': user.email,
             'password': user.password
@@ -56,8 +57,12 @@ async def login(
         response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
         return response
 
-    except Exception as err:
+    except AuthError as err:
         return templates.TemplateResponse(request, "login.html", context={"login": True, "error": err})
+
+    except Exception as err:
+        print(err)
+        return templates.TemplateResponse(request, "login.html", context={"login": True, "error": "Ocorreu uma falha no login"})
 
 @router.get('/login')
 async def login(request: Request):

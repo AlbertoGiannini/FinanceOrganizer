@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, EmailStr
 from typing import Literal
 from datetime import date
 
@@ -8,8 +8,13 @@ class Item(BaseModel):
     category: str = Field(min_length=1, max_length=100)
     date_item: date
 
-class User(BaseModel):
+class UserEmail(BaseModel):
     email: str
+
+class UserLogin(UserEmail):
+    password: str
+
+class UserRegister(UserEmail):
     password: str
     confirm_password: str
 
