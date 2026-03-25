@@ -12,7 +12,11 @@
                             <button class="edit-button">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button type="button" class="delete-button" hx-target="closest tr" hx-swap="outerHTML" hx-delete="/items/delete-item/{{ item.id }}" confirm-with-sweet-alert="true">
+                            <button type="button" class="delete-button"
+                                hx-delete="/items/delete-item/{{ item.id }}"
+                                hx-target="closest tr" 
+                                hx-swap="innerHTML"
+                                confirm-with-sweet-alert="true">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>

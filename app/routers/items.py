@@ -1,6 +1,6 @@
 from typing import Literal
 from fastapi import APIRouter, HTTPException, status, Request, Depends, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
 from schemas import Item
@@ -30,8 +30,10 @@ async def send_item(
     item = Item(value=value, type=type, category=category, date_item=date_item)
     new_item = item.model_dump()
     new_item['user_id'] = user_id
-    insert_item(new_item)
-    return templates.TemplateResponse(request, "item.html", context={"item": new_item})
+    response = insert_item(new_item)
+    new_item['id'] = response[0].get('id')
+    amount = get_total_amount(user_id)
+    return templates.TemplateResponse(request, "item.html", context={"item": new_item, "total_amount": amount})
 
 @router.get("/get-income-expenses", status_code=status.HTTP_200_OK)
 async def get_income_expenses(type: Literal["receita", "despesa"], current_user: dict = Depends(get_current_user)):
@@ -42,14 +44,8 @@ async def get_income_expenses(type: Literal["receita", "despesa"], current_user:
 @router.get("/total-amount", status_code=status.HTTP_200_OK)
 async def total_amount(current_user: dict = Depends(get_current_user)):
     user_id = current_user.get("sub")
-    items = get_all_items(user_id)
-    total_incomes = sum(item['value'] for item in items if item['type'] == "receita")
-    total_expenses = sum(item['value'] for item in items if item['type'] == "despesa")
-    return {
-        "total_incomes": total_incomes,
-        "total_expenses": total_expenses,
-        "total-amount": total_incomes - total_expenses
-    }
+    response = get_total_amount(user_id)
+    return response
 
 @router.get("/income-expenses-by-category", status_code=status.HTTP_200_OK)
 async def income_expenses_by_category(type: str, category: str = None, current_user: dict = Depends(get_current_user)):
@@ -64,7 +60,13 @@ async def remove_item(request: Request, item_id: int, current_user: dict = Depen
         response = delete_item(item_id, user_id)
         if not response:
             raise HTTPException(status_code=403, detail='Forbidden')
-        return templates.TemplateResponse(request, "home.html")
+        response = get_total_amount(user_id)
+        html_oob = f"""
+        <p id="current-balance" hx-swap-oob="true">R$ {response['total_amount']:.2f}</p>
+        <p class="income-text" id="income" hx-swap-oob="true">R$ {response['total_incomes']:.2f}</p>
+        <p class="expense-text" id="expense-month" hx-swap-oob="true">R$ {response['total_expenses']:.2f}</p>
+        """
+        return HTMLResponse(content=html_oob)
     except PermissionDeniedError as err:
         raise HTTPException(status_code=403, detail=str(err))    
 

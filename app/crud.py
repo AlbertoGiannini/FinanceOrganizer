@@ -9,7 +9,7 @@ def insert_item(item: dict):
         if item["type"] not in ["receita", "despesa"]:
             return "Invalid type. Must be 'receita' or 'despesa'."
         response = db.table("finance").insert(item).execute()
-        return f"Item inserted successfully {response.data}"
+        return response.data
     except Exception as e:
         return f"Error inserting item: {str(e)}"
 
@@ -80,6 +80,10 @@ def get_by_month(type: str, month: int, year: int, user_id: str):
         .lte("date_item", end_date)
         .execute()
     )
+    return response.data
+
+def get_total_amount(user_id: str):
+    response = db.rpc("get_user_totals", {"p_user_id": user_id}).execute()
     return response.data
 
 class PermissionDeniedError(Exception):
