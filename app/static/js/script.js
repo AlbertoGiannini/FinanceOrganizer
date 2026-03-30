@@ -7,7 +7,8 @@ async function tableButtons() {
     tableBody.forEach(element => {
         const updateButton = element.querySelector(".edit-button");
         const id = element.id;
-        if (updateButton) {
+        if (updateButton && !updateButton.dataset.bound) {
+            updateButton.dataset.bound = "true";
             updateButton.addEventListener("click", async function (event) {
                 await editLine(id);
             });
@@ -17,8 +18,19 @@ async function tableButtons() {
 
 tableButtons();
 
+// Adicionamos isso para garantir que toda vez que o HTMX trouxer uma linha nova do servidor
+// ele re-ative o botão de editar apenas dessa linha nova, sem duplicar os antigos!
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    tableButtons();
+});
+
+const originalRows = {};
+
 function editLine(id) {
     const line = document.querySelector(`tr[id="${id}"]`);
+    if (!originalRows[id]) {
+        originalRows[id] = line.innerHTML;
+    }
     const columns = line.querySelectorAll("td")
     const oldCategory = columns[0].textContent;
     var oldValue = columns[1].textContent;
@@ -29,77 +41,42 @@ function editLine(id) {
     const oldDateFormatted = oldDate.split('/').reverse().join('-')
 
     line.innerHTML = `
-        <td><input type="text" id="edit-cat-${id}" value="${oldCategory}" class="form-control"></td>
-        <td><input type="number" id="edit-val-${id}" value="${oldValue}" class="form-control"></td>
+        <td><input type="text" id="edit-cat-${id}" name="category" value="${oldCategory}" class="form-control"></td>
+        <td><input type="number" id="edit-val-${id}" name="value" value="${oldValue}" class="form-control"></td>
         <td>
-            <select id="edit-type-${id}" class="form-control">
+            <select id="edit-type-${id}" name="type" class="form-control">
                 <option value="receita" ${oldType === 'receita' ? 'selected' : ''}>Receita</option>
                 <option value="despesa" ${oldType === 'despesa' ? 'selected' : ''}>Despesa</option>
             </select>
         </td>
-        <td><input type="date" id="edit-date-${id}" value="${oldDateFormatted}" class="form-control"></td>
+        <td><input type="date" id="edit-date-${id}" name="date_item" value="${oldDateFormatted}" class="form-control"></td>
         <td>
-            <button onclick="updateItem(${id})" class="btn-save">✅</button>
-            <button class="btn-cancel">❌</button>
+            <button type="button" 
+            hx-put="/items/update-item/${id}" 
+            hx-include="closest tr" 
+            hx-target="closest tr" 
+            hx-swap="outerHTML" 
+            class="btn-save">✅
+            </button>
+            <button type="button" class="btn-cancel" onclick="cancelEdit('${id}')">❌</button>
         </td>
     `;
-
+    htmx.process(line);
 }
 
-async function updateItem(id) {
-    const payload = {
-        category: document.getElementById(`edit-cat-${id}`).value,
-        value: parseFloat(document.getElementById(`edit-val-${id}`).value),
-        type: document.getElementById(`edit-type-${id}`).value,
-        date_item: document.getElementById(`edit-date-${id}`).value
-    };
-    try {
-        const response = await fetch(`${API_URL}/update-item/${id}`, {
-            method: "PUT",
-            body: JSON.stringify(payload),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-        if (response.status === 204) {
-            window.location.reload();
-        } else {
-            alert("Erro ao editar o item. Por favor, tente novamente.");
-
+function cancelEdit(id) {
+    const line = document.querySelector(`tr[id="${id}"]`);
+    if (originalRows[id]) {
+        line.innerHTML = originalRows[id];
+        htmx.process(line);
+        const updateButton = line.querySelector(".edit-button");
+        if (updateButton) {
+            updateButton.addEventListener("click", async function (event) {
+                await editLine(id);
+            });
         }
-    } catch (error) {
-        console.error("Erro ao editar o item:", error);
-        alert("Erro ao editar o item. Por favor, tente novamente.");
     }
 }
-
-async function loadMonthlyExpensesIncomes() {
-    expenseElement = document.getElementById("expense-month");
-    incomeElement = document.getElementById("income");
-    try {
-        const [resRec, resDes] = await Promise.all([
-            fetch(`${API_URL}/get-month-expenses?type=receita`),
-            fetch(`${API_URL}/get-month-expenses?type=despesa`)
-        ]);
-        const receitas = await resRec.json();
-        const despesas = await resDes.json();
-        var totalIncomes = 0;
-        receitas.forEach(item => {
-            totalIncomes = totalIncomes + item['value'];
-        });
-        incomeElement.textContent = `R$ ${totalIncomes}`;
-
-        var totalExpenses = 0;
-        despesas.forEach(item => {
-            totalExpenses = totalExpenses + item['value'];
-        });
-        expenseElement.textContent = `R$ ${totalExpenses}`;
-    } catch (error) {
-        console.error("Erro ao carregar os dados:", error);
-    }
-}
-
-//loadMonthlyExpensesIncomes();
 
 const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
 const mobileNav = document.querySelector('.mobile-nav');

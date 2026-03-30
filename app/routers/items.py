@@ -71,14 +71,27 @@ async def remove_item(request: Request, item_id: int, current_user: dict = Depen
     except Exception as err:
         raise HTTPException(status_code=500, detail='Internal Server Error')
 
-@router.put("/update-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def change_item(item_id: int, item: Item, current_user: dict = Depends(get_current_user)):
+@router.put("/update-item/{item_id}", status_code=status.HTTP_200_OK)
+async def change_item(
+    item_id: int,
+    request: Request,
+    value: float = Form(...),
+    type: str = Form(...),
+    category: str = Form(...),
+    date_item: str = Form(...),
+    current_user: dict = Depends(get_current_user)
+):
     try:
         user_id = current_user.get("sub")
+        item = Item(value=value, type=type, category=category, date_item=date_item)
         response = update_item(item_id, item, user_id)
         if not response:
             raise HTTPException(status_code=403, detail='Forbidden')
-        return response
+        amount = get_balance_oob(user_id)
+        new_item = item.model_dump()
+        new_item['id'] = item_id
+        item_html = templates.TemplateResponse(request, "item.html", context={"item": new_item, "amount_html": amount}).body.decode("utf-8")
+        return HTMLResponse(content=item_html)
     except PermissionDeniedError as err:
         raise HTTPException(status_code=403, detail=str(err))    
 
