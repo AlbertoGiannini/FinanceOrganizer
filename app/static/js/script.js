@@ -8,9 +8,9 @@ async function tableButtons() {
         const updateButton = element.querySelector(".edit-button");
         const id = element.id;
         if (updateButton) {
-            updateButton.addEventListener("click", async function(event) {
-            await editLine(id);
-        });
+            updateButton.addEventListener("click", async function (event) {
+                await editLine(id);
+            });
         }
     });
 }
@@ -65,7 +65,7 @@ async function updateItem(id) {
             window.location.reload();
         } else {
             alert("Erro ao editar o item. Por favor, tente novamente.");
-        
+
         }
     } catch (error) {
         console.error("Erro ao editar o item:", error);
@@ -131,13 +131,13 @@ document.addEventListener('click', (event) => {
 
 
 // --- INTERCEPTAÇÃO DE ALERTAS DE CONFIRMAÇÃO (SWEETALERT2) ---
-document.body.addEventListener('htmx:confirm', function(e) {
+document.body.addEventListener('htmx:confirm', function (e) {
     // Verifica se o elemento clicado tem o nosso atributo customizado
     if (e.detail.elt.hasAttribute('confirm-with-sweet-alert')) {
-        
+
         // Pausa a requisição do HTMX
-        e.preventDefault(); 
-        
+        e.preventDefault();
+
         // Chama o pop-up do SweetAlert2
         Swal.fire({
             title: 'Deletar este item?',
@@ -148,14 +148,14 @@ document.body.addEventListener('htmx:confirm', function(e) {
             confirmButtonText: 'Confirmar',
             cancelButtonText: 'Cancelar',
             width: '250px',        // Trava a largura máxima para não estourar na tela    // Diminui o espaço em branco dentro do alerta
-                customClass: {
-                    title: 'swal-title-small', // (Opcional) Você pode criar essa classe no seu CSS se quiser diminuir mais a fonte
-                    actions: 'swal-actions-mobile'
-                }
+            customClass: {
+                title: 'swal-title-small', // (Opcional) Você pode criar essa classe no seu CSS se quiser diminuir mais a fonte
+                actions: 'swal-actions-mobile'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 // Libera o HTMX para enviar a requisição ao FastAPI
-                e.detail.issueRequest(true); 
+                e.detail.issueRequest(true);
             }
         });
     }

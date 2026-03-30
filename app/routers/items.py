@@ -6,6 +6,7 @@ from datetime import datetime
 from schemas import Item
 from crud import *
 from auth import get_current_user
+from services import get_balance_oob
 
 router = APIRouter(prefix="/items", tags=["Finance Transactions"])
 
@@ -17,7 +18,7 @@ async def get_all(current_user: dict = Depends(get_current_user)):
     response = get_all_items(user_id)
     return response
 
-@router.post("/send-item", status_code=status.HTTP_201_CREATED)
+@router.post("/send-item", status_code=status.HTTP_200_OK)
 async def send_item(
     request: Request,
     value: float = Form(...),
@@ -32,8 +33,10 @@ async def send_item(
     new_item['user_id'] = user_id
     response = insert_item(new_item)
     new_item['id'] = response[0].get('id')
-    amount = get_total_amount(user_id)
-    return templates.TemplateResponse(request, "item.html", context={"item": new_item, "total_amount": amount})
+    amount = get_balance_oob(user_id)
+    # Forma mais segura de renderizar incluindo os templates globais (evita crashes do jinja)
+    item_html = templates.TemplateResponse(request, "item.html", context={"item": new_item, "amount_html": amount}).body.decode("utf-8")
+    return HTMLResponse(content=item_html)
 
 @router.get("/get-income-expenses", status_code=status.HTTP_200_OK)
 async def get_income_expenses(type: Literal["receita", "despesa"], current_user: dict = Depends(get_current_user)):
@@ -53,20 +56,15 @@ async def income_expenses_by_category(type: str, category: str = None, current_u
     response = get_expenses_income_by_category(type, category, user_id)
     return response
 
-@router.delete("/delete-item/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/delete-item/{item_id}", status_code=status.HTTP_200_OK)
 async def remove_item(request: Request, item_id: int, current_user: dict = Depends(get_current_user)):
     try:
         user_id = current_user.get("sub")
         response = delete_item(item_id, user_id)
         if not response:
             raise HTTPException(status_code=403, detail='Forbidden')
-        response = get_total_amount(user_id)
-        html_oob = f"""
-        <p id="current-balance" hx-swap-oob="true">R$ {response['total_amount']:.2f}</p>
-        <p class="income-text" id="income" hx-swap-oob="true">R$ {response['total_incomes']:.2f}</p>
-        <p class="expense-text" id="expense-month" hx-swap-oob="true">R$ {response['total_expenses']:.2f}</p>
-        """
-        return HTMLResponse(content=html_oob)
+        response = get_balance_oob(user_id)
+        return HTMLResponse(content=response)
     except PermissionDeniedError as err:
         raise HTTPException(status_code=403, detail=str(err))    
 

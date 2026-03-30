@@ -1,24 +1,21 @@
 <tr id="{{ item.id }}">
-                        {%- if item.type == 'receita' -%}
-                            {%- set valueColor = 'green' -%}
-                        {%- else -%}
-                            {%- set valueColor = 'red' -%}
-                        {%- endif -%}
-                        <td data-label="Descrição">{{ item.category }}</td>
-                        <td data-label="Valor" style="color: {{ valueColor }}">R$ {{ item.value }}</td>
-                        <td data-label="Tipo">{{ item.type }}</td>
-                        <td data-label="Data">{{ item.date_item }}</td>
-                        <td data-label="Ações">
-                            <button class="edit-button">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button type="button" class="delete-button"
-                                hx-delete="/items/delete-item/{{ item.id }}"
-                                hx-target="closest tr" 
-                                hx-swap="innerHTML"
-                                confirm-with-sweet-alert="true">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    
+    {%- if item.type == 'receita' -%}
+    {%- set valueColor = 'green' -%}
+    {%- else -%}
+    {%- set valueColor = 'red' -%}
+    {%- endif -%}
+    <td data-label="Descrição">{{ item.category }}</td>
+    <td data-label="Valor" style="color: {{ valueColor }}">R$ {{ item.value }}</td>
+    <td data-label="Tipo">{{ item.type }}</td>
+    <td data-label="Data">{{ item.date_item }}</td>
+    <td data-label="Ações">
+        <button class="edit-button">
+            <i class="fa-solid fa-pen-to-square"></i>
+        </button>
+        <button type="button" class="delete-button" hx-delete="/items/delete-item/{{ item.id }}" hx-target="closest tr"
+            hx-swap="innerHTML" confirm-with-sweet-alert="true">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+        {{ amount_html | safe }}
+    </td>
+</tr>
