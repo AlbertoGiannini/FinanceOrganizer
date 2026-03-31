@@ -32,6 +32,8 @@ async def send_item(
     new_item = item.model_dump()
     new_item['user_id'] = user_id
     response = insert_item(new_item)
+    if not response:
+        raise HTTPException(status_code=500, detail='Failed to insert item')
     new_item['id'] = response[0].get('id')
     amount = get_balance_oob(user_id)
     # Forma mais segura de renderizar incluindo os templates globais (evita crashes do jinja)
@@ -107,4 +109,10 @@ async def get_month_expenses(
     ):
     user_id = current_user.get("sub")
     response = get_by_month(type, month, year, user_id)
+    return response
+
+@router.get("/get-all-categories", status_code=status.HTTP_200_OK)
+async def get_categories(current_user: dict = Depends(get_current_user)):
+    user_id = current_user.get("sub")
+    response = get_all_categories(user_id)
     return response

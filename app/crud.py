@@ -16,7 +16,7 @@ def insert_item(item: dict):
 def get_all_items(user_id):
     response = (
         db.table("finance")
-        .select("*")
+        .select("*, category(name)")
         .eq('user_id', user_id)
         .order("id", desc=True)
         .execute()
@@ -84,6 +84,15 @@ def get_by_month(type: str, month: int, year: int, user_id: str):
 
 def get_total_amount(user_id: str):
     response = db.rpc("get_user_totals", {"p_user_id": user_id}).execute()
+    return response.data
+
+def get_all_categories(user_id: str):
+    response = (
+        db.table("category")
+        .select("*")
+        .or_(f"user_id.is.null,user_id.eq.{user_id}")
+        .execute()
+    )
     return response.data
 
 class PermissionDeniedError(Exception):

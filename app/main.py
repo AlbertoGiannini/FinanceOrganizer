@@ -31,7 +31,8 @@ app.include_router(items.router)
 async def read_index(request: Request, current_user: dict = Depends(get_current_user)):
     all_items = await items.get_all(current_user)
     total_amount = await items.total_amount(current_user)
-    return templates.TemplateResponse(request, "home.html", context={"items": all_items, "total_amount": total_amount})
+    categories = await items.get_categories(current_user)
+    return templates.TemplateResponse(request, "home.html", context={"items": all_items, "total_amount": total_amount, "categories": categories})
 
 @app.exception_handler(status.HTTP_401_UNAUTHORIZED)
 async def auth_exception_handler(request: Request, exe: HTTPException):

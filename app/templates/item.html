@@ -4,7 +4,7 @@
     {%- else -%}
     {%- set valueColor = 'red' -%}
     {%- endif -%}
-    <td data-label="Descrição">{{ item.category }}</td>
+    <td data-label="Categoria">{{ item.category.name }}</td>
     <td data-label="Valor" style="color: {{ valueColor }}">R$ {{ item.value }}</td>
     <td data-label="Tipo">{{ item.type }}</td>
     <td data-label="Data">{{ item.date_item }}</td>
