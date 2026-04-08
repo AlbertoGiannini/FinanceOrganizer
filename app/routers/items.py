@@ -36,7 +36,8 @@ async def send_item(
         raise HTTPException(status_code=500, detail='Failed to insert item')
     new_item['id'] = response[0].get('id')
     amount = get_balance_oob(user_id)
-    # Forma mais segura de renderizar incluindo os templates globais (evita crashes do jinja)
+    category = get_category_by_id(category)
+    new_item['category'] = {'name': category[0].get('name')}
     item_html = templates.TemplateResponse(request, "item.html", context={"item": new_item, "amount_html": amount}).body.decode("utf-8")
     return HTMLResponse(content=item_html)
 

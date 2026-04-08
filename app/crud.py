@@ -130,5 +130,19 @@ def get_all_categories(user_id: str):
         print(e)
         return None
 
+def get_category_by_id(category_id: str):
+    try:
+        response = (
+            db.table('category')
+            .select('name')
+            .eq('id', category_id)
+            .execute()
+        )
+        return response.data
+
+    except Exception as err:
+        print(err)
+        return None
+
 class PermissionDeniedError(Exception):
     pass
