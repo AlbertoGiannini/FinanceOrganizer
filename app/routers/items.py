@@ -6,7 +6,7 @@ from datetime import datetime
 from schemas import Item
 from crud import *
 from auth import get_current_user
-from services import get_balance_oob
+from services import *
 
 router = APIRouter(prefix="/items", tags=["Finance Transactions"])
 
@@ -37,9 +37,13 @@ async def send_item(
     new_item['id'] = response[0].get('id')
     amount = get_balance_oob(user_id)
     category = get_category_by_id(category)
+    # Validade category[0]
     new_item['category'] = {'name': category[0].get('name')}
     item_html = templates.TemplateResponse(request, "item.html", context={"item": new_item, "amount_html": amount}).body.decode("utf-8")
-    return HTMLResponse(content=item_html)
+    response_alert = show_alert("success", "Item adicionado com sucesso!")
+    response_html = HTMLResponse(content=item_html)
+    response_html.headers["HX-Trigger"] = response_alert
+    return response_html
 
 @router.get("/get-income-expenses", status_code=status.HTTP_200_OK)
 async def get_income_expenses(type: Literal["receita", "despesa"], current_user: dict = Depends(get_current_user)):
@@ -67,7 +71,10 @@ async def remove_item(request: Request, item_id: int, current_user: dict = Depen
         if not response:
             raise HTTPException(status_code=403, detail='Forbidden')
         response = get_balance_oob(user_id)
-        return HTMLResponse(content=response)
+        response_alert = show_alert("success", "Item removido com sucesso!")
+        response_html = HTMLResponse(content=response)
+        response_html.headers["HX-Trigger"] = response_alert
+        return response_html
     except PermissionDeniedError as err:
         raise HTTPException(status_code=403, detail=str(err))    
 
@@ -93,8 +100,14 @@ async def change_item(
         amount = get_balance_oob(user_id)
         new_item = item.model_dump()
         new_item['id'] = item_id
+        category = get_category_by_id(category)
+        # Validade category[0]
+        new_item['category'] = {'name': category[0].get('name')}
         item_html = templates.TemplateResponse(request, "item.html", context={"item": new_item, "amount_html": amount}).body.decode("utf-8")
-        return HTMLResponse(content=item_html)
+        response_alert = show_alert("success", "Item atualizado com sucesso!")
+        response_html = HTMLResponse(content=item_html)
+        response_html.headers["HX-Trigger"] = response_alert
+        return response_html
     except PermissionDeniedError as err:
         raise HTTPException(status_code=403, detail=str(err))    
 

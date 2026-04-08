@@ -31,7 +31,9 @@ function editLine(id) {
     if (!originalRows[id]) {
         originalRows[id] = line.innerHTML;
     }
-    const columns = line.querySelectorAll("td")
+    const select_categories = document.getElementById('category');
+    const select_options = select_categories.innerHTML;
+    const columns = line.querySelectorAll("td");
     const oldCategory = columns[0].textContent;
     var oldValue = columns[1].textContent;
     oldValue = oldValue.replace("R$ ", "");
@@ -41,7 +43,9 @@ function editLine(id) {
     const oldDateFormatted = oldDate.split('/').reverse().join('-')
 
     line.innerHTML = `
-        <td><input type="text" id="edit-cat-${id}" name="category" value="${oldCategory}" class="form-control"></td>
+        <td><select id="edit-cat-${id}" name="category" class="form-control">
+                ${select_options}
+            </select>
         <td><input type="number" id="edit-val-${id}" name="value" value="${oldValue}" class="form-control"></td>
         <td>
             <select id="edit-type-${id}" name="type" class="form-control">
@@ -61,6 +65,13 @@ function editLine(id) {
             <button type="button" class="btn-cancel" onclick="cancelEdit('${id}')">❌</button>
         </td>
     `;
+    const selectEdit = document.getElementById(`edit-cat-${id}`);
+    selectEdit.querySelector('option[value=""]').remove()
+    Array.from(selectEdit.options).forEach(option => {
+        if (option.text.trim() === oldCategory.trim()) {
+            option.selected = true;
+        }
+    });
     htmx.process(line);
 }
 
@@ -136,4 +147,41 @@ document.body.addEventListener('htmx:confirm', function (e) {
             }
         });
     }
+});
+
+// Cria a configuração base do Toast
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end', // Fica no canto superior direito
+    showConfirmButton: false, // Tira os botões
+    timer: 3000, // Tempo que ele fica na tela (3 segundos)
+    timerProgressBar: true, // Barrinha de tempo correndo no fundo
+    
+    // Pausa o tempo se o usuário passar o mouse em cima
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    },
+    
+    // Injeta as classes CSS customizadas para a animação
+    showClass: {
+        popup: 'swal-toast-anim-in'
+    },
+    hideClass: {
+        popup: 'swal-toast-anim-out'
+    },
+    customClass: {
+        title: 'swal-toast-title'
+    }
+});
+
+// Escuta o evento que vem do FastAPI (ex: quando adiciona ou edita um item)
+document.body.addEventListener('mostrarAlerta', function (e) {
+    const dados = e.detail;
+    
+    // Dispara o Toast com os dados recebidos
+    Toast.fire({
+        icon: dados.icone || 'success',
+        title: dados.mensagem || 'Ação realizada com sucesso!'
+    });
 });

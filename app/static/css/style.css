@@ -328,6 +328,65 @@ footer {
     font-size: 0.9rem;
 }
 
+/* --- ANIMAÇÕES DO TOAST --- */
+
+/* Entrando da direita para a esquerda */
+@keyframes slideInRight {
+    from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+/* Saindo da esquerda para a direita (sumindo) */
+@keyframes slideOutRight {
+    from { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+    to { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+}
+
+/* Aplica as animações nas classes que configuramos no JS */
+.swal-toast-anim-in {
+    animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+}
+
+.swal-toast-anim-out {
+    animation: slideOutRight 0.3s ease-in forwards !important;
+}
+
+/* --- VISUAL MODERNO DO TOAST --- */
+
+/* Ajusta a fonte e a cor do texto do Toast */
+.swal-toast-title {
+    font-size: 0.95rem !important;
+    color: #334155 !important; /* Aquele mesmo cinza slate elegante */
+    font-weight: 500 !important;
+    margin-top: 0 !important;
+}
+
+/* Deixa a caixa do Toast mais moderna */
+.swal2-toast {
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* Sombra suave */
+    padding: 12px 20px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Cor da barrinha de tempo (opcional: um verde suave) */
+.swal2-timer-progress-bar {
+    background-color: #10b981 !important;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
     .desktop-nav {
