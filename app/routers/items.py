@@ -27,23 +27,32 @@ async def send_item(
     date_item: str = Form(...),
     current_user: dict = Depends(get_current_user)
 ):
-    user_id = current_user.get("sub")
-    item = Item(value=value, type=type, category=category, date_item=date_item)
-    new_item = item.model_dump()
-    new_item['user_id'] = user_id
-    response = insert_item(new_item)
-    if not response:
-        raise HTTPException(status_code=500, detail='Failed to insert item')
-    new_item['id'] = response[0].get('id')
-    amount = get_balance_oob(user_id)
-    category = get_category_by_id(category)
-    # Validade category[0]
-    new_item['category'] = {'name': category[0].get('name')}
-    item_html = templates.TemplateResponse(request, "item.html", context={"item": new_item, "amount_html": amount}).body.decode("utf-8")
-    response_alert = show_alert("success", "Item adicionado com sucesso!")
-    response_html = HTMLResponse(content=item_html)
-    response_html.headers["HX-Trigger"] = response_alert
-    return response_html
+    try:
+        if value <= 0:
+            raise HTTPException(status_code=400, detail="Value must be greater than zero.")
+        user_id = current_user.get("sub")
+        item = Item(value=value, type=type, category=category, date_item=date_item)
+        new_item = item.model_dump()
+        new_item['user_id'] = user_id
+        response = insert_item(new_item)
+        if not response:
+            raise HTTPException(status_code=500, detail='Failed to insert item')
+        new_item['id'] = response[0].get('id')
+        amount = get_balance_oob(user_id)
+        category = get_category_by_id(category)
+        # Validade category[0]
+        new_item['category'] = {'name': category[0].get('name')}
+        item_html = templates.TemplateResponse(request, "item.html", context={"item": new_item, "amount_html": amount}).body.decode("utf-8")
+        response_alert = show_alert("success", "Item adicionado com sucesso!")
+        response_html = HTMLResponse(content=item_html)
+        response_html.headers["HX-Trigger"] = response_alert
+        return response_html
+
+    except HTTPException as http_err:
+        raise http_err
+
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=str(err))
 
 @router.get("/get-income-expenses", status_code=status.HTTP_200_OK)
 async def get_income_expenses(type: Literal["receita", "despesa"], current_user: dict = Depends(get_current_user)):
